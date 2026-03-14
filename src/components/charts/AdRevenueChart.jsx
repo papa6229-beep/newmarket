@@ -1,9 +1,11 @@
-import { Bar } from 'react-chartjs-2';
+import { Chart } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  BarController,
   BarElement,
+  LineController,
   LineElement,
   PointElement,
   Tooltip,
@@ -12,7 +14,10 @@ import {
 import { formatAmount, formatExact } from '../../utils/calculations.js';
 
 ChartJS.register(
-  CategoryScale, LinearScale, BarElement, LineElement, PointElement, Tooltip, Legend
+  CategoryScale, LinearScale,
+  BarController, BarElement,
+  LineController, LineElement, PointElement,
+  Tooltip, Legend
 );
 
 export default function AdRevenueChart({ dailyAdData }) {
@@ -62,7 +67,7 @@ export default function AdRevenueChart({ dailyAdData }) {
   return (
     <div className="bg-white rounded-xl border p-5 shadow-sm">
       <h3 className="font-semibold text-gray-700 mb-4">일별 광고 귀속 매출 vs 광고비</h3>
-      <Bar data={data} options={options} />
+      <Chart type="bar" data={data} options={options} />
     </div>
   );
 }

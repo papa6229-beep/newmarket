@@ -1,9 +1,11 @@
-import { Bar, Line } from 'react-chartjs-2';
+import { Chart } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  BarController,
   BarElement,
+  LineController,
   LineElement,
   PointElement,
   Tooltip,
@@ -12,7 +14,10 @@ import {
 import { formatAmount, formatExact } from '../../utils/calculations.js';
 
 ChartJS.register(
-  CategoryScale, LinearScale, BarElement, LineElement, PointElement, Tooltip, Legend
+  CategoryScale, LinearScale,
+  BarController, BarElement,
+  LineController, LineElement, PointElement,
+  Tooltip, Legend
 );
 
 export default function EventDailyChart({ salesData, couponData, eventName }) {
@@ -84,7 +89,7 @@ export default function EventDailyChart({ salesData, couponData, eventName }) {
       <h3 className="font-semibold text-gray-700 mb-4">
         이벤트 기간 일별 매출 vs 쿠폰 매출{eventName ? ` — ${eventName}` : ''}
       </h3>
-      <Bar data={data} options={options} />
+      <Chart type="bar" data={data} options={options} />
     </div>
   );
 }
