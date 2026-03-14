@@ -8,10 +8,21 @@ export default function ChatPanel({ analysisData, apiKey }) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingText, setStreamingText] = useState('');
   const bottomRef = useRef(null);
+  const lastAssistantRef = useRef(null);
 
+  // 스트리밍 중 → 텍스트 따라 하단 스크롤
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [history, streamingText]);
+    if (isStreaming) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [streamingText, isStreaming]);
+
+  // 응답 완료 → 새 어시스턴트 메시지 상단으로 스크롤 (AnalysisBlock 먼저 보임)
+  useEffect(() => {
+    if (!isStreaming && history.length > 0 && history[history.length - 1].role === 'assistant') {
+      lastAssistantRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [history, isStreaming]);
 
   const send = async () => {
     const question = input.trim();
@@ -62,8 +73,8 @@ export default function ChatPanel({ analysisData, apiKey }) {
         </p>
       </div>
 
-      {/* Message list */}
-      <div className="px-5 py-4 space-y-4 max-h-96 overflow-y-auto">
+      {/* Message list — 높이를 충분히 확보해 차트가 잘리지 않도록 */}
+      <div className="px-5 py-4 space-y-4 max-h-[700px] overflow-y-auto">
         {history.length === 0 && !isStreaming && (
           <div className="text-center py-8 text-gray-400 text-sm">
             <p className="text-2xl mb-2">🤔</p>
@@ -72,24 +83,29 @@ export default function ChatPanel({ analysisData, apiKey }) {
           </div>
         )}
 
-        {history.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            {msg.role === 'user' ? (
-              <div className="max-w-[80%] rounded-xl px-4 py-2.5 text-sm whitespace-pre-wrap bg-blue-600 text-white">
-                {msg.content}
-              </div>
-            ) : (
-              <div className="w-full rounded-xl px-4 py-3 text-sm bg-gray-100 text-gray-800">
-                <AnalysisBlock analysisData={analysisData} />
-                <p className="whitespace-pre-wrap mt-3">{msg.content}</p>
-              </div>
-            )}
-          </div>
-        ))}
+        {history.map((msg, i) => {
+          const isLastAssistant = msg.role === 'assistant' && i === history.length - 1;
+          return (
+            <div
+              key={i}
+              ref={isLastAssistant ? lastAssistantRef : null}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              {msg.role === 'user' ? (
+                <div className="max-w-[80%] rounded-xl px-4 py-2.5 text-sm whitespace-pre-wrap bg-blue-600 text-white">
+                  {msg.content}
+                </div>
+              ) : (
+                <div className="w-full rounded-xl px-4 py-3 text-sm bg-gray-100 text-gray-800">
+                  <AnalysisBlock analysisData={analysisData} />
+                  <p className="whitespace-pre-wrap mt-3">{msg.content}</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
 
+        {/* 스트리밍 중: AnalysisBlock + 실시간 텍스트 */}
         {isStreaming && (
           <div className="flex justify-start">
             <div className="w-full rounded-xl px-4 py-3 text-sm bg-gray-100 text-gray-800">
