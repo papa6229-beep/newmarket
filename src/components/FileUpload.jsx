@@ -107,17 +107,16 @@ export default function FileUpload({ onDataLoaded, onError }) {
     try {
       const { parseSalesData, parseCouponData, parseAdData } = await import('../utils/excelParser.js');
 
+      // 기본매출 파싱
       const salesData = await parseSalesData(salesFiles[0]);
-      const couponData = [];
-      for (const f of couponFiles) {
-        const d = await parseCouponData(f);
-        couponData.push(...d);
-      }
-      const adData = [];
-      for (const f of adFiles) {
-        const d = await parseAdData(f);
-        adData.push(...d);
-      }
+
+      // 쿠폰이벤트: 모든 파일 병렬 파싱 후 통합
+      const couponResults = await Promise.all(couponFiles.map(f => parseCouponData(f)));
+      const couponData = couponResults.flat();
+
+      // 광고: 모든 파일 병렬 파싱 후 통합
+      const adResults = await Promise.all(adFiles.map(f => parseAdData(f)));
+      const adData = adResults.flat();
 
       onDataLoaded({ salesData, couponData, adData, apiKey });
     } catch (err) {

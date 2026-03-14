@@ -1,8 +1,17 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import SalesTab from './tabs/SalesTab.jsx';
 import EventTab from './tabs/EventTab.jsx';
 import AdTab from './tabs/AdTab.jsx';
 import StrategyTab from './tabs/StrategyTab.jsx';
+import ChatPanel from './ChatPanel.jsx';
+import {
+  calcKPIs,
+  calcMonthlySales,
+  calcYoYData,
+  calcYoYGrowth,
+  calcEventSummary,
+  calcAdSummary,
+} from '../utils/calculations.js';
 
 const TABS = [
   { id: 'sales', label: '전체매출', icon: '📊' },
@@ -14,6 +23,17 @@ const TABS = [
 export default function Dashboard({ data, onReset }) {
   const [activeTab, setActiveTab] = useState('sales');
   const { salesData, couponData, adData, apiKey } = data;
+
+  const analysisData = useMemo(() => {
+    const kpis = calcKPIs(salesData);
+    const monthlySales = calcMonthlySales(salesData);
+    const yoyData = calcYoYData(monthlySales);
+    const years = Object.keys(yoyData).map(Number).sort();
+    const yoyGrowth = years.length >= 2 ? calcYoYGrowth(yoyData, years) : {};
+    const eventSummary = couponData?.length ? calcEventSummary(couponData) : [];
+    const adSummary = adData?.length ? calcAdSummary(adData) : [];
+    return { kpis, monthlySales, yoyGrowth, eventSummary, adSummary };
+  }, [salesData, couponData, adData]);
 
   const dateSummary = () => {
     if (!salesData?.length) return '';
@@ -103,6 +123,7 @@ export default function Dashboard({ data, onReset }) {
             apiKey={apiKey}
           />
         )}
+        <ChatPanel analysisData={analysisData} apiKey={apiKey} />
       </main>
     </div>
   );
