@@ -4,27 +4,10 @@ import LoginPage from './pages/LoginPage.jsx';
 import ShopSelectPage from './pages/ShopSelectPage.jsx';
 import AnalysisPage from './pages/AnalysisPage.jsx';
 
-const LS_KEY = 'mib_shops';
-
-function loadShops() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveShops(shops) {
-  try {
-    localStorage.setItem(LS_KEY, JSON.stringify(shops));
-  } catch {}
-}
-
 export default function App() {
   const [page, setPage] = useState('landing');  // landing | login | shop | analysis
   const [user, setUser] = useState(null);
-  const [shops, setShops] = useState(loadShops);
+  const [shops, setShops] = useState([]);
   const [currentShop, setCurrentShop] = useState(null);
 
   const handleLogin = (u) => {
@@ -33,19 +16,7 @@ export default function App() {
   };
 
   const handleAddShop = (shop) => {
-    setShops(prev => {
-      const next = [...prev, shop];
-      saveShops(next);
-      return next;
-    });
-  };
-
-  const handleDeleteShop = (id) => {
-    setShops(prev => {
-      const next = prev.filter(s => s.id !== id);
-      saveShops(next);
-      return next;
-    });
+    setShops(prev => [...prev, shop]);
   };
 
   const handleSelectShop = (shop) => {
@@ -74,7 +45,6 @@ export default function App() {
           shops={shops}
           onSelectShop={handleSelectShop}
           onAddShop={handleAddShop}
-          onDeleteShop={handleDeleteShop}
           onLogout={handleLogout}
         />
       );
