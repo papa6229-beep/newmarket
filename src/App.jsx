@@ -1,97 +1,39 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
-import LandingPage from './pages/LandingPage.jsx';
-import LoginPage from './pages/LoginPage.jsx';
-import ShopSelectPage from './pages/ShopSelectPage.jsx';
-import AnalysisPage from './pages/AnalysisPage.jsx';
-
-const LS_KEY = 'mib_shops';
-
-function loadShops() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveShops(shops) {
-  try {
-    localStorage.setItem(LS_KEY, JSON.stringify(shops));
-  } catch {}
-}
-
-function AppRoutes() {
-  const [user, setUser] = useState(null);
-  const [shops, setShops] = useState(loadShops);
-  const [currentShop, setCurrentShop] = useState(null);
-
-  const handleLogin = (u) => setUser(u);
-
-  const handleAddShop = (shop) => {
-    setShops(prev => {
-      const next = [...prev, shop];
-      saveShops(next);
-      return next;
-    });
-  };
-
-  const handleDeleteShop = (id) => {
-    setShops(prev => {
-      const next = prev.filter(s => s.id !== id);
-      saveShops(next);
-      return next;
-    });
-  };
-
-  const handleSelectShop = (shop) => setCurrentShop(shop);
-
-  const handleLogout = () => {
-    setUser(null);
-    setCurrentShop(null);
-  };
-
-  return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-      <Route
-        path="/shops"
-        element={
-          user
-            ? <ShopSelectPage
-                user={user}
-                shops={shops}
-                onSelectShop={handleSelectShop}
-                onAddShop={handleAddShop}
-                onDeleteShop={handleDeleteShop}
-                onLogout={handleLogout}
-              />
-            : <Navigate to="/login" replace />
-        }
-      />
-      <Route
-        path="/analysis"
-        element={
-          user && currentShop
-            ? <AnalysisPage
-                shop={currentShop}
-                user={user}
-                onLogout={handleLogout}
-              />
-            : <Navigate to={user ? '/shops' : '/login'} replace />
-        }
-      />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-}
+import FileUpload from './components/FileUpload.jsx';
+import Dashboard from './components/Dashboard.jsx';
 
 export default function App() {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+
+  const handleDataLoaded = (loadedData) => {
+    setError('');
+    setData(loadedData);
+  };
+
+  const handleError = (msg) => {
+    setError(msg);
+  };
+
+  const handleReset = () => {
+    setData(null);
+    setError('');
+  };
+
+  if (data) {
+    return <Dashboard data={data} onReset={handleReset} />;
+  }
+
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <FileUpload onDataLoaded={handleDataLoaded} onError={handleError} />
+      {error && (
+        <div className="max-w-3xl mx-auto px-4 pb-4">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-600">
+            ❌ {error}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
