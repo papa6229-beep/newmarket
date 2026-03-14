@@ -1,13 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
 body {
-  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
-  background-color: #f8fafc;
+  font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  background-color: #FAF8F5;
+  color: #1C1917;
+  -webkit-font-smoothing: antialiased;
   margin: 0;
 }
 
-#root {
-  min-height: 100vh;
+#root { min-height: 100vh; }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D5C8BA; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #BDA898; }
+
+/* ── Component classes (plain CSS, no @apply) ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  background-color: #C96442;
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  transition: background-color 0.15s;
+  text-decoration: none;
+}
+.btn-primary:hover:not(:disabled) { background-color: #B55539; }
+.btn-primary:active:not(:disabled) { background-color: #9A4630; }
+.btn-primary:disabled { background-color: #D5C8BA; cursor: not-allowed; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  background-color: #F5F0EB;
+  color: #4A3728;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid #EBE3DB;
+  transition: background-color 0.15s;
+}
+.btn-secondary:hover { background-color: #EBE3DB; }
+.btn-secondary:active { background-color: #D5C8BA; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #8C7060;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+.btn-ghost:hover { background-color: #F5F0EB; color: #4A3728; }
+
+.card {
+  background: #fff;
+  border-radius: 1rem;
+  border: 1px solid #EBE3DB;
+  box-shadow: 0 1px 4px rgba(60,40,20,0.06), 0 4px 16px rgba(60,40,20,0.04);
+}
+
+.input {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #EBE3DB;
+  background: #fff;
+  font-size: 0.875rem;
+  color: #2E2019;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+}
+.input::placeholder { color: #BDA898; }
+.input:focus {
+  border-color: #F8A877;
+  box-shadow: 0 0 0 3px rgba(201,100,66,0.12);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: #FAF8F5;
+  color: #6B5244;
+  border: 1px solid #EBE3DB;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.chip:hover {
+  background-color: #FEF3EE;
+  color: #C96442;
+  border-color: #FBC9A9;
+}
+
+.section-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: #BDA898;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: block;
+}
+
+/* ── Chat prose ── */
+.chat-prose h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 0.9em;
+  margin-bottom: 0.3em;
+  padding-bottom: 0.2em;
+  border-bottom: 1px solid #EBE3DB;
+  color: #2E2019;
+}
+.chat-prose h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 0.7em;
+  margin-bottom: 0.2em;
+  color: #4A3728;
+}
+.chat-prose p { margin: 0.35em 0; line-height: 1.7; }
+.chat-prose ul { padding-left: 1.3em; margin: 0.35em 0; }
+.chat-prose li { margin: 0.2em 0; line-height: 1.6; }
+.chat-prose strong { font-weight: 600; color: #2E2019; }
+.chat-prose code {
+  background: #F5F0EB;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.83em;
+  font-family: monospace;
 }

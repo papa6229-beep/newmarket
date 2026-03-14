@@ -1,39 +1,63 @@
 import { useState } from 'react';
-import FileUpload from './components/FileUpload.jsx';
-import Dashboard from './components/Dashboard.jsx';
+import LandingPage from './pages/LandingPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import ShopSelectPage from './pages/ShopSelectPage.jsx';
+import AnalysisPage from './pages/AnalysisPage.jsx';
 
 export default function App() {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState('');
+  const [page, setPage] = useState('landing');  // landing | login | shop | analysis
+  const [user, setUser] = useState(null);
+  const [shops, setShops] = useState([]);
+  const [currentShop, setCurrentShop] = useState(null);
 
-  const handleDataLoaded = (loadedData) => {
-    setError('');
-    setData(loadedData);
+  const handleLogin = (u) => {
+    setUser(u);
+    setPage('shop');
   };
 
-  const handleError = (msg) => {
-    setError(msg);
+  const handleAddShop = (shop) => {
+    setShops(prev => [...prev, shop]);
   };
 
-  const handleReset = () => {
-    setData(null);
-    setError('');
+  const handleSelectShop = (shop) => {
+    setCurrentShop(shop);
+    setPage('analysis');
   };
 
-  if (data) {
-    return <Dashboard data={data} onReset={handleReset} />;
+  const handleLogout = () => {
+    setUser(null);
+    setCurrentShop(null);
+    setPage('landing');
+  };
+
+  const handleChangeShop = () => {
+    setCurrentShop(null);
+    setPage('shop');
+  };
+
+  switch (page) {
+    case 'login':
+      return <LoginPage onLogin={handleLogin} />;
+    case 'shop':
+      return (
+        <ShopSelectPage
+          user={user}
+          shops={shops}
+          onSelectShop={handleSelectShop}
+          onAddShop={handleAddShop}
+          onLogout={handleLogout}
+        />
+      );
+    case 'analysis':
+      return (
+        <AnalysisPage
+          shop={currentShop}
+          user={user}
+          onLogout={handleLogout}
+          onChangeShop={handleChangeShop}
+        />
+      );
+    default:
+      return <LandingPage onStart={() => setPage('login')} />;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <FileUpload onDataLoaded={handleDataLoaded} onError={handleError} />
-      {error && (
-        <div className="max-w-3xl mx-auto px-4 pb-4">
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-600">
-            ❌ {error}
-          </div>
-        </div>
-      )}
-    </div>
-  );
 }
