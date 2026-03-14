@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar.jsx';
 import ChatInterface from '../components/ChatInterface.jsx';
 import {
@@ -149,8 +148,7 @@ function buildPredefinedResponse(label, analysisData) {
   return null; // fall through to Claude API
 }
 
-export default function AnalysisPage({ shop, user, onLogout }) {
-  const navigate = useNavigate();
+export default function AnalysisPage({ shop, user, onLogout, onChangeShop }) {
   const [salesFiles, setSalesFiles] = useState([]);
   const [couponFiles, setCouponFiles] = useState([]);
   const [adFiles, setAdFiles] = useState([]);
@@ -288,8 +286,8 @@ export default function AnalysisPage({ shop, user, onLogout }) {
         isLoading={isLoading}
         eventSummary={analysisData?.eventSummary || []}
         onNewChat={handleNewChat}
-        onLogout={() => { onLogout(); navigate('/'); }}
-        onChangeShop={() => navigate('/shops')}
+        onLogout={onLogout}
+        onChangeShop={onChangeShop}
       />
       <div className="flex-1 overflow-hidden">
         <ChatInterface

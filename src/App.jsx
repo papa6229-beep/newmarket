@@ -1,4 +1,3 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
 import LandingPage from './pages/LandingPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
@@ -22,12 +21,16 @@ function saveShops(shops) {
   } catch {}
 }
 
-function AppRoutes() {
+export default function App() {
+  const [page, setPage] = useState('landing');  // landing | login | shop | analysis
   const [user, setUser] = useState(null);
   const [shops, setShops] = useState(loadShops);
   const [currentShop, setCurrentShop] = useState(null);
 
-  const handleLogin = (u) => setUser(u);
+  const handleLogin = (u) => {
+    setUser(u);
+    setPage('shop');
+  };
 
   const handleAddShop = (shop) => {
     setShops(prev => {
@@ -45,53 +48,46 @@ function AppRoutes() {
     });
   };
 
-  const handleSelectShop = (shop) => setCurrentShop(shop);
+  const handleSelectShop = (shop) => {
+    setCurrentShop(shop);
+    setPage('analysis');
+  };
 
   const handleLogout = () => {
     setUser(null);
     setCurrentShop(null);
+    setPage('landing');
   };
 
-  return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-      <Route
-        path="/shops"
-        element={
-          user
-            ? <ShopSelectPage
-                user={user}
-                shops={shops}
-                onSelectShop={handleSelectShop}
-                onAddShop={handleAddShop}
-                onDeleteShop={handleDeleteShop}
-                onLogout={handleLogout}
-              />
-            : <Navigate to="/login" replace />
-        }
-      />
-      <Route
-        path="/analysis"
-        element={
-          user && currentShop
-            ? <AnalysisPage
-                shop={currentShop}
-                user={user}
-                onLogout={handleLogout}
-              />
-            : <Navigate to={user ? '/shops' : '/login'} replace />
-        }
-      />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-}
+  const handleChangeShop = () => {
+    setCurrentShop(null);
+    setPage('shop');
+  };
 
-export default function App() {
-  return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
-  );
+  switch (page) {
+    case 'login':
+      return <LoginPage onLogin={handleLogin} />;
+    case 'shop':
+      return (
+        <ShopSelectPage
+          user={user}
+          shops={shops}
+          onSelectShop={handleSelectShop}
+          onAddShop={handleAddShop}
+          onDeleteShop={handleDeleteShop}
+          onLogout={handleLogout}
+        />
+      );
+    case 'analysis':
+      return (
+        <AnalysisPage
+          shop={currentShop}
+          user={user}
+          onLogout={handleLogout}
+          onChangeShop={handleChangeShop}
+        />
+      );
+    default:
+      return <LandingPage onStart={() => setPage('login')} />;
+  }
 }

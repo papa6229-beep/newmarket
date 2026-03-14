@@ -1,20 +1,18 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const SHOP_ICONS = ['🏪', '👗', '💄', '🍕', '📱', '🏋️', '☕', '🎮', '🌸', '🎁'];
 const SHOP_COLORS = [
-  'bg-orange-50 border-orange-200',
-  'bg-pink-50 border-pink-200',
-  'bg-purple-50 border-purple-200',
-  'bg-blue-50 border-blue-200',
-  'bg-green-50 border-green-200',
-  'bg-yellow-50 border-yellow-200',
-  'bg-accent-50 border-accent-200',
-  'bg-teal-50 border-teal-200',
+  'bg-orange-50 border-orange-200 text-orange-600',
+  'bg-pink-50 border-pink-200 text-pink-600',
+  'bg-purple-50 border-purple-200 text-purple-600',
+  'bg-blue-50 border-blue-200 text-blue-600',
+  'bg-green-50 border-green-200 text-green-600',
+  'bg-yellow-50 border-yellow-200 text-yellow-600',
+  'bg-accent-50 border-accent-200 text-accent-600',
+  'bg-teal-50 border-teal-200 text-teal-600',
 ];
 
 export default function ShopSelectPage({ user, shops, onSelectShop, onAddShop, onDeleteShop, onLogout }) {
-  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [newName, setNewName] = useState('');
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -34,17 +32,6 @@ export default function ShopSelectPage({ user, shops, onSelectShop, onAddShop, o
     onSelectShop(shop);
     setShowModal(false);
     setNewName('');
-    navigate('/analysis');
-  };
-
-  const handleSelectShop = (shop) => {
-    onSelectShop(shop);
-    navigate('/analysis');
-  };
-
-  const handleLogout = () => {
-    onLogout();
-    navigate('/');
   };
 
   const handleDeleteConfirm = () => {
@@ -60,7 +47,7 @@ export default function ShopSelectPage({ user, shops, onSelectShop, onAddShop, o
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-warm-100">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-accent-500 flex items-center justify-center shadow-sm shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-accent-500 flex items-center justify-center shadow-sm">
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
               </svg>
@@ -69,12 +56,12 @@ export default function ShopSelectPage({ user, shops, onSelectShop, onAddShop, o
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-warm-50 border border-warm-200">
-              <div className="w-5 h-5 rounded-full bg-accent-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+              <div className="w-5 h-5 rounded-full bg-accent-500 flex items-center justify-center text-white text-[10px] font-bold">
                 {user?.name?.[0] || 'A'}
               </div>
               <span className="text-xs font-medium text-warm-700">{user?.name || '관리자'}</span>
             </div>
-            <button onClick={handleLogout} className="btn-ghost text-xs px-3 py-1.5">
+            <button onClick={onLogout} className="btn-ghost text-xs px-3 py-1.5">
               로그아웃
             </button>
           </div>
@@ -93,14 +80,15 @@ export default function ShopSelectPage({ user, shops, onSelectShop, onAddShop, o
             </p>
           </div>
 
+          {/* Shops Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {shops.map(shop => (
               <div key={shop.id} className="relative group">
                 <button
-                  onClick={() => handleSelectShop(shop)}
+                  onClick={() => onSelectShop(shop)}
                   className="w-full card p-7 flex flex-col items-start gap-4 hover:border-accent-300 hover:shadow-md transition-all text-left"
                 >
-                  <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center text-2xl shrink-0 ${shop.colorClass || 'bg-accent-50 border-accent-200'}`}>
+                  <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center text-2xl ${shop.colorClass || 'bg-accent-50 border-accent-200'}`}>
                     {shop.icon}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -114,6 +102,7 @@ export default function ShopSelectPage({ user, shops, onSelectShop, onAddShop, o
                     </svg>
                   </div>
                 </button>
+                {/* Delete button */}
                 <button
                   onClick={(e) => { e.stopPropagation(); setDeleteTarget(shop); }}
                   className="absolute top-3 right-3 w-6 h-6 rounded-md bg-white border border-warm-200 text-warm-400 hover:text-red-400 hover:border-red-200 hover:bg-red-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
@@ -125,13 +114,13 @@ export default function ShopSelectPage({ user, shops, onSelectShop, onAddShop, o
               </div>
             ))}
 
-            {/* Add new */}
+            {/* Add new card */}
             <button
               onClick={() => setShowModal(true)}
               className="p-7 rounded-2xl border-2 border-dashed border-warm-200 flex flex-col items-start gap-4
                          hover:border-accent-400 hover:bg-accent-50/50 transition-all group min-h-[156px]"
             >
-              <div className="w-12 h-12 rounded-2xl bg-warm-100 group-hover:bg-accent-100 flex items-center justify-center transition-colors shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-warm-100 group-hover:bg-accent-100 flex items-center justify-center transition-colors">
                 <svg className="w-5 h-5 text-warm-400 group-hover:text-accent-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>

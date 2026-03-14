@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage({ onLogin }) {
-  const navigate = useNavigate();
   const [id, setId] = useState('admin');
   const [pw, setPw] = useState('1111');
   const [error, setError] = useState('');
@@ -16,7 +14,6 @@ export default function LoginPage({ onLogin }) {
     await new Promise(r => setTimeout(r, 600));
     if (id === 'admin' && pw === '1111') {
       onLogin({ id, name: '관리자', role: 'System Admin' });
-      navigate('/shops');
     } else {
       setError('아이디 또는 비밀번호가 올바르지 않습니다.');
       setLoading(false);
@@ -32,17 +29,6 @@ export default function LoginPage({ onLogin }) {
       </div>
 
       <div className="relative w-full max-w-sm">
-        {/* Back to landing */}
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-1.5 text-xs text-warm-400 hover:text-warm-700 transition-colors mb-6"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-          </svg>
-          홈으로 돌아가기
-        </button>
-
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-accent-500 flex items-center justify-center mx-auto mb-4 shadow-md">
@@ -60,7 +46,7 @@ export default function LoginPage({ onLogin }) {
             <div>
               <label className="text-xs font-semibold text-warm-700 mb-1.5 block">아이디</label>
               <div className="relative">
-                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
                 <input
@@ -77,7 +63,7 @@ export default function LoginPage({ onLogin }) {
             <div>
               <label className="text-xs font-semibold text-warm-700 mb-1.5 block">비밀번호</label>
               <div className="relative">
-                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                 </svg>
                 <input
@@ -107,7 +93,7 @@ export default function LoginPage({ onLogin }) {
             >
               {loading ? (
                 <span className="flex items-center gap-2">
-                  <svg className="w-4 h-4 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
