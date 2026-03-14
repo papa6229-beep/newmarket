@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { askChatQuestion } from '../utils/anthropicApi.js';
+import AnalysisBlock from './chat/AnalysisBlock.jsx';
 
 export default function ChatPanel({ analysisData, apiKey }) {
   const [history, setHistory] = useState([]); // [{role, content}]
@@ -76,23 +77,27 @@ export default function ChatPanel({ analysisData, apiKey }) {
             key={i}
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <div
-              className={`max-w-[80%] rounded-xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
-                msg.role === 'user'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-800'
-              }`}
-            >
-              {msg.content}
-            </div>
+            {msg.role === 'user' ? (
+              <div className="max-w-[80%] rounded-xl px-4 py-2.5 text-sm whitespace-pre-wrap bg-blue-600 text-white">
+                {msg.content}
+              </div>
+            ) : (
+              <div className="w-full rounded-xl px-4 py-3 text-sm bg-gray-100 text-gray-800">
+                <AnalysisBlock analysisData={analysisData} />
+                <p className="whitespace-pre-wrap mt-3">{msg.content}</p>
+              </div>
+            )}
           </div>
         ))}
 
         {isStreaming && (
           <div className="flex justify-start">
-            <div className="max-w-[80%] rounded-xl px-4 py-2.5 text-sm bg-gray-100 text-gray-800 whitespace-pre-wrap">
-              {streamingText || <span className="animate-pulse text-gray-400">▋</span>}
-              {streamingText && <span className="animate-pulse text-gray-400">▋</span>}
+            <div className="w-full rounded-xl px-4 py-3 text-sm bg-gray-100 text-gray-800">
+              <AnalysisBlock analysisData={analysisData} />
+              <p className="whitespace-pre-wrap mt-3">
+                {streamingText || <span className="animate-pulse text-gray-400">▋</span>}
+                {streamingText && <span className="animate-pulse text-gray-400">▋</span>}
+              </p>
             </div>
           </div>
         )}

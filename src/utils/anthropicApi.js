@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { calcYoYData } from './calculations.js';
 
 // 분석 데이터 요약 텍스트 생성 (공통)
 export function buildSummaryText({ kpis, monthlySales, eventSummary, adSummary, yoyGrowth }) {
@@ -22,9 +23,20 @@ export function buildSummaryText({ kpis, monthlySales, eventSummary, adSummary, 
 
   if (monthlySales && monthlySales.length > 0) {
     lines.push('\n### 월별 매출 추이');
-    monthlySales.slice(-12).forEach(m => {
+    monthlySales.slice(-24).forEach(m => {
       lines.push(`- ${m.ym}: ${m.totalSales?.toLocaleString()}원 (주문 ${m.orders?.toLocaleString()}건)`);
     });
+
+    // 연도별 월별 비교
+    const { byYear, years } = calcYoYData(monthlySales);
+    if (years.length >= 2) {
+      lines.push('\n### 연도별 월별 매출 비교');
+      const months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+      months.forEach(m => {
+        const row = years.map(y => `${y}년: ${byYear[y]?.[m] != null ? byYear[y][m].toLocaleString() + '원' : '-'}`).join(' / ');
+        lines.push(`- ${m}월: ${row}`);
+      });
+    }
   }
 
   if (eventSummary && eventSummary.length > 0) {
@@ -98,10 +110,13 @@ ${summaryText}
 
 이 데이터를 기반으로 사용자의 질문에 답변하세요.
 
+참고: 사용자 화면에는 위 데이터를 기반으로 한 KPI 카드(총매출·주문수·ATV·전환율), 월별 매출 차트, 이벤트 기여 차트, 인사이트 뱃지가 시각화되어 함께 표시됩니다.
+
 규칙:
 - 반드시 위 데이터에 근거하여 답변할 것
 - 데이터에 없는 내용은 "데이터에 포함되지 않았습니다"라고 명시할 것
-- 숫자를 단순 낭독하지 말고 맥락과 의미를 함께 설명할 것
+- 숫자를 단순 낭독하지 말고 차트/카드에서 보이는 수치의 맥락과 의미를 해석하여 설명할 것
+- 차트나 카드를 언급할 때 "위 차트에서 보시면", "KPI 카드에서 확인하실 수 있듯" 등 시각화를 자연스럽게 연결할 것
 - 한국어로 답변할 것
 - 마크다운 활용 가능 (**강조**, - 목록 등)`;
 
